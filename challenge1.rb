@@ -40,6 +40,8 @@ until suffix > server_limit
 	puts "----------------------"
 	puts "Username: root"
 	puts "Password: "+password
+	server.wait_for { print "."; ready? }
+	puts server.addresses.to_s
 	puts
 	
 	suffix +=1
