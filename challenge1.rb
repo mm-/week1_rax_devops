@@ -21,18 +21,27 @@ connection = Fog::Compute.new({
 
 
 
-# The start of our numbering ie: web1, and the amount of servers
+# The start of our numbering suffix ie: web1, and the amount of servers
 # that we're going to create and number that way, in this case 3
 suffix = 1
 server_limit = 3
 
 until suffix > server_limit
+	# Create the servers name out of the label and suffix we specified
 	server_name = server_label+suffix.to_s
 
+	# Actually go out and build the server with our label, suffix, image and flavor from above
 	server = connection.servers.create(:name => server_name, :flavor_id => flavor_id, :image_id => image_id)
-	
-	puts "Creating"+server_name
 
+	# Grab the password for our newly created server	
+	password = server.password
+
+	puts server_name
+	puts "----------------------"
+	puts "Username: root"
+	puts "Password: "+password
+	puts
+	
 	suffix +=1
 end
 
