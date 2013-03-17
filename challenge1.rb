@@ -47,23 +47,21 @@ spawned_servers.zip(server_passwords).each do |server_id, password|
 
 	# Get the correct server+suffix
 	current_server = connection.servers.get server_id
-	current_server.reload
 
 	# Set the correct server_name from label and suffix
 	server_name = server_label+suffix.to_s
 
-
 	# Uses the fog wait_for to wait until the IP address is comissioned.
-	# I seems that just waiting on the first one will throw nill errors
-	# because it's not fully initialized, so we immediately wait on the 
-	# first[addr] value afterwards
 	current_server.wait_for { !addresses["public"].nil?}
-        current_server.wait_for { !addresses["public"].first["addr"].nil?}
 
-
-	# Sets the server ip finally
-	server_ip = current_server.addresses["public"].first["addr"].to_s
+	# The above wait_for leaves our ipv4 addy still uncommissioned, sadface
+	until current_server.ipv4_address.length > 0
+	current_server.reload
+	end
 	
+	# Sets the server ip finally using the now non-empty ipv4_address
+	
+	server_ip = current_server.ipv4_address	
 
 	# Output the server name,password and IP to the terminal
 	puts server_name
