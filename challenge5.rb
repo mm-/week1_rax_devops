@@ -41,10 +41,8 @@ database_state = instance.database.first.state.to_s
 #database_state = database.state.to_s
 
 until database_state == 'ACTIVE'
-
-database_state = instance.database.first.state.to_s
-#	database_state = database.state.to_s
+  database_state = instance.database.first.state.to_s
 end
 
-
+#TODO - user creation is still failing, unsure about the cause
 user = instance.users.create( :name => user_name, :password => password, :databases => database_name)
