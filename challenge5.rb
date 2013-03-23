@@ -12,6 +12,9 @@ instance_volume_size = '1'
 database_name = 'testdb1'
 
 
+user_name = 'testuser'
+password = 'testpass'
+
 # Create a connection
 connection = Fog::Rackspace::Databases.new({
 #	:provider		=> 'Rackspace',
@@ -25,26 +28,23 @@ instance = connection.instances.create(:name => instance_name, :flavor_id => fla
 
 instance.wait_for { ready? }
 
-#instances = connection.instances 
-#databases = instance.databases
-
-
-#database = instance.databases
-
-#puts instances.to_s
-
-#flavors = connection.flavors
-
-#puts flavors.to_s
-
 
 # This creates a database, but it still throws an error:
 # challenge5.rb:45:in `<main>': undefined local variable or method `databases' for main:Object (NameError)
+
 database = instance.databases.create( :name => database_name)
 
-#puts databases.to_s
+database_state = instance.database.first.state.to_s
 
-database.wait_for { ready? }
+#database.wait_for { ready? }
+
+#database_state = database.state.to_s
+
+until database_state == 'ACTIVE'
+
+database_state = instance.database.first.state.to_s
+#	database_state = database.state.to_s
+end
 
 
-
+user = instance.users.create( :name => user_name, :password => password, :databases => database_name)
