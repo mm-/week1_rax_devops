@@ -1,7 +1,19 @@
 require 'fog'
+require 'trollop'
 
 
 ENV['FOG_RC'] = '~/.rackspace_cloud_credentials'
+
+opts = Trollop::options do
+  opt :ip, "IP address for A record", :type => :string
+  opt :fqdn, "FQDN to add the record for", :type => :string
+
+end
+
+ip = opts[:ip]
+fqdn = opts[:fqdn]
+
+
 
 
 dns = Fog::DNS.new({
@@ -12,14 +24,14 @@ dns = Fog::DNS.new({
 
 
 zone = dns.zones.create(
-    :domain => 'topseller.org',
+    :domain => "#{fqdn}",
     :email => 'lol@topseller.org'
 )
 
 
 record = zone.records.create(
-    :value => '8.8.8.8',
-    :name => 'topseller.org',
+    :value => "#{ip}",
+    :name => "#{fqdn}",
     :type => 'A'
 )
 
